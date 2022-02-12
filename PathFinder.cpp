@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <iterator>
+#include <limits>
 using namespace std;
 
 #include "Node.hpp"
@@ -9,6 +10,7 @@ using namespace std;
 
 bool ValidStartAndTarget(pair<int, int> Start, pair<int, int> Target, pair<int, int> MapDimensions)
 {
+    // Start and Target are within the bounds of the map
     if (Start.first < 0 || Start.first >= MapDimensions.first
         || Start.second < 0 || Start.second >= MapDimensions.second
         || Target.first < 0 || Target.first >= MapDimensions.second
@@ -21,29 +23,29 @@ bool ValidStartAndTarget(pair<int, int> Start, pair<int, int> Target, pair<int, 
 
 vector<Node*> FindNodeNeighbours(Node* node, const pair<int, int> mapDimensions)
 {
-    vector<Node*> neighbours;
+    vector<Node*> neighbours(4);
 
     pair<int, int> nextPosition = node->position;
     // Find left neighbour
     nextPosition.first -= 1;
     if (nextPosition.first >= 0) {
-        neighbours.push_back(new Node(nextPosition, node));
+        neighbours[0] = new Node(nextPosition, node);
     }
     // Find right neighbour
     nextPosition.first += 2;
     if (nextPosition.first < mapDimensions.first) {
-        neighbours.push_back(new Node(nextPosition, node));
+        neighbours[1] = new Node(nextPosition, node);
     }
     // Find top neighbour
     nextPosition.first -= 1;
     nextPosition.second -= 1;
     if (nextPosition.second >= 0) {
-        neighbours.push_back(new Node(nextPosition, node));
+        neighbours[2] = new Node(nextPosition, node);
     }
     // Find bottom neighbour
     nextPosition.second += 2;
     if (nextPosition.second < mapDimensions.second) {
-        neighbours.push_back(new Node(nextPosition, node));
+        neighbours[3] = new Node(nextPosition, node);
     }
 
     return neighbours;
@@ -51,6 +53,7 @@ vector<Node*> FindNodeNeighbours(Node* node, const pair<int, int> mapDimensions)
 
 vector<int> TracePath(Node* node, pair<int, int> Start, pair<int, int> Target, int mapWidth)
 {
+    // Traces the path back from start to target by following the parents of each node
     vector<int> path;
     Node* p_node = node->p_parent;
     while (p_node != nullptr) {
@@ -82,10 +85,11 @@ bool FindPath(pair<int, int> Start,
     pair<int, int> MapDimensions,
     vector<int>& OutPath)
 {
-    // Validate Start and Target
+    // Validate inputs
     if (!ValidStartAndTarget(Start, Target, MapDimensions)
-        || Map[PairToIndex(Start, MapDimensions.first)] == 0
-        || Map[PairToIndex(Target, MapDimensions.first)] == 0) {
+        || Map[PairToIndex(Start, MapDimensions.first)] != 1
+        || Map[PairToIndex(Target, MapDimensions.first)] != 1
+        || MapDimensions.first <= 0 || MapDimensions.second <= 0) {
         return false;
     }
 
@@ -95,8 +99,17 @@ bool FindPath(pair<int, int> Start,
         return true;
     }
 
-    vector<vector<Node*>> nodeMap(MapDimensions.first, vector<Node*>(MapDimensions.second));
+    // Avoid length errors due to map size being too large for nodeMap 2d-vector
+    // XXX: Resolving this issue would be the next step to improve this code
+    vector<vector<Node*>> nodeMap;
+    if (MapDimensions.first > nodeMap.max_size()
+        || MapDimensions.second > vector<Node*>().max_size()) {
+        return false;
+    }
+    nodeMap = vector<vector<Node*>>(MapDimensions.first, vector<Node*>(MapDimensions.second));
     NodeList openNodes;
+
+    // Start at the target node - this avoids having to reverse the resulting path
     Node* targetNode = new Node(Target, nullptr);
     nodeMap[Target.first][Target.second] = targetNode;
     openNodes.insert(openNodes.begin, targetNode);
@@ -109,6 +122,7 @@ bool FindPath(pair<int, int> Start,
         // Find Neighbours
         vector<Node*> neighbours = FindNodeNeighbours(lowestValueNode, MapDimensions);
         for (int i = 0; i < neighbours.size(); i++) {
+            if (neighbours[i] == nullptr) { continue; }
             // Check if target found
             if (neighbours[i]->position == Start) {
                 OutPath = TracePath(neighbours[i], Start, Target, MapDimensions.first);
@@ -124,7 +138,7 @@ bool FindPath(pair<int, int> Start,
             }
 
             // Check if map position is traversable
-            if ( Map[PairToIndex(neighbours[i]->position, MapDimensions.first)] == 0) {
+            if ( Map[PairToIndex(neighbours[i]->position, MapDimensions.first)] != 1) {
                 continue;
             }
 
@@ -143,23 +157,26 @@ bool FindPath(pair<int, int> Start,
                 nodeMap[neighbours[i]->position.first][neighbours[i]->position.second] = neighbours[i];
             }
             else if(sameNode->value <= neighbours[i]->value) {
+                // Node in map is more or equally efficient
                 delete neighbours[i];
                 continue;
             }
             else {
+                // New node (by new path) is more efficient than node in map
                 openNodes.erase(sameNode);
                 delete sameNode;
                 nodeMap[neighbours[i]->position.first][neighbours[i]->position.second] = neighbours[i];
             }
 
-            // Sort openNodes in place for easy access
+            // Sort openNodes in place for easy access - avoids searching for lowest value node
+            // Starts at the end of the list as this is more efficient most of the time
             Node* it = openNodes.end;
             while(true) {
                 if (it == nullptr) {
                     openNodes.push_front(neighbours[i]);
                     break;
                 }
-                if (it->value < neighbours[i]->value) {
+                if (it->value <= neighbours[i]->value) {
                     if (it->next_node == nullptr) {
                         openNodes.push_back(neighbours[i]);
                     }

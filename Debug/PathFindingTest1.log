@@ -1,3 +1,6 @@
-﻿  PathFindingTest1.cpp
-C:\Users\ivor9\repos\PathFindingTest1\PathFindingTest1.cpp(18,27): warning C4018: '<': signed/unsigned mismatch
+﻿  PathFinder.cpp
+C:\Users\ivor9\repos\PathFindingTest1\PathFinder.cpp(75,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\ivor9\repos\PathFindingTest1\PathFinder.cpp(105,29): warning C4018: '>': signed/unsigned mismatch
+C:\Users\ivor9\repos\PathFindingTest1\PathFinder.cpp(106,33): warning C4018: '>': signed/unsigned mismatch
+C:\Users\ivor9\repos\PathFindingTest1\PathFinder.cpp(124,27): warning C4018: '<': signed/unsigned mismatch
   PathFindingTest1.vcxproj -> C:\Users\ivor9\repos\PathFindingTest1\Debug\PathFindingTest1.exe

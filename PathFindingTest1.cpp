@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <limits>
 using namespace std;
 
 #include "Map.hpp"
@@ -77,4 +78,30 @@ int main()
     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
     cout << "Duration: " << duration.count() << endl;
     cout << "6 seconds is 6000000" << endl;
+    
+    
+    //pair<int, int> dimensions{ INT_MAX - 1, INT_MAX - 1 };
+    //vector<int> bigArray(dimensions.first * dimensions.second, 1);
+    ///*int numOfObstacles = 1000;
+    //srand(time(NULL));
+    //for (int i = 0; i < numOfObstacles; i++) {
+    //    int x = rand() % dimensions.first;
+    //    int y = rand() % dimensions.second;
+    //    bigArray[x + (y * dimensions.first)] = 2;
+    //}*/
+    //Map exampleMap5 = Map(bigArray, dimensions);
+    //vector<int> path;
+    //auto start = chrono::high_resolution_clock::now();
+    //if (FindPath({ 0, 0 }, { dimensions.first - 1, dimensions.second - 1 }, exampleMap5.map, exampleMap5.dimensions, path)) {
+    //    cout << "Path found: " << path.size() << endl;
+    //}
+    //else {
+    //    cout << "Path not found!" << endl;
+    //}
+    ////FindAndPrint(exampleMap5, { 1, 1 }, { dimensions.first - 1, dimensions.second - 1 });
+    //auto stop = chrono::high_resolution_clock::now();
+    //auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+    //cout << "Duration: " << duration.count() << endl;
+    //cout << "6 seconds is 6000000" << endl;
+    
 }
