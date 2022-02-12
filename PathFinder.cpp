@@ -85,6 +85,12 @@ bool FindPath(pair<int, int> Start,
     pair<int, int> MapDimensions,
     vector<int>& OutPath)
 {
+    // This is just evil
+    if (&OutPath == nullptr
+        || &Map == nullptr) {
+        return false;
+    }
+
     // Validate inputs
     if (!ValidStartAndTarget(Start, Target, MapDimensions)
         || Map[PairToIndex(Start, MapDimensions.first)] != 1

@@ -63,7 +63,7 @@ int main()
 
     //FindAndPrint(exampleMap4, { 4, 4 }, { 12, 16 });
     
-    pair<int, int> dimensions{ 1000, 1000 };
+    /*pair<int, int> dimensions{ 10000, 10000 };
     vector<int> bigArray(dimensions.first * dimensions.second, 1);
     Map exampleMap5 = Map(bigArray, dimensions);
     vector<int> path;
@@ -77,31 +77,29 @@ int main()
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
     cout << "Duration: " << duration.count() << endl;
+    cout << "6 seconds is 6000000" << endl;*/
+    
+    pair<int, int> dimensions{ 1000, 1000 };
+    vector<bool> bigArray(dimensions.first * dimensions.second, true);
+    int numOfObstacles = 1000;
+    srand(time(NULL));
+    for (int i = 0; i < numOfObstacles; i++) {
+        int x = rand() % dimensions.first;
+        int y = rand() % dimensions.second;
+        bigArray[x + (y * dimensions.first)] = false;
+    }
+    vector<int>* path = NULL;
+    auto start = chrono::high_resolution_clock::now();
+    vector<int>* p_map = NULL;
+    if (FindPath({ 0, 0 }, { dimensions.first - 1, dimensions.second - 1 }, *p_map, dimensions, *path)) {
+        cout << "Path found: " << path->size() << endl;
+    }
+    else {
+        cout << "Path not found!" << endl;
+    }
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+    cout << "Duration: " << duration.count() << endl;
     cout << "6 seconds is 6000000" << endl;
-    
-    
-    //pair<int, int> dimensions{ INT_MAX - 1, INT_MAX - 1 };
-    //vector<int> bigArray(dimensions.first * dimensions.second, 1);
-    ///*int numOfObstacles = 1000;
-    //srand(time(NULL));
-    //for (int i = 0; i < numOfObstacles; i++) {
-    //    int x = rand() % dimensions.first;
-    //    int y = rand() % dimensions.second;
-    //    bigArray[x + (y * dimensions.first)] = 2;
-    //}*/
-    //Map exampleMap5 = Map(bigArray, dimensions);
-    //vector<int> path;
-    //auto start = chrono::high_resolution_clock::now();
-    //if (FindPath({ 0, 0 }, { dimensions.first - 1, dimensions.second - 1 }, exampleMap5.map, exampleMap5.dimensions, path)) {
-    //    cout << "Path found: " << path.size() << endl;
-    //}
-    //else {
-    //    cout << "Path not found!" << endl;
-    //}
-    ////FindAndPrint(exampleMap5, { 1, 1 }, { dimensions.first - 1, dimensions.second - 1 });
-    //auto stop = chrono::high_resolution_clock::now();
-    //auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
-    //cout << "Duration: " << duration.count() << endl;
-    //cout << "6 seconds is 6000000" << endl;
     
 }
