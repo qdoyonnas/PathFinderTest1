@@ -169,17 +169,24 @@ bool FindPath(pair<int, int> Start,
             }
 
             // Sort openNodes in place for easy access - avoids searching for lowest value node
-            Node* it = openNodes.begin;
+            // Some cpu profiling determined that starting at the end of the list is faster in most circumstances
+            // Results in a sort of depth first search
+            Node* it = openNodes.end;
             while (true) {
                 if (it == nullptr) {
                     openNodes.push_front(neighbours[i]);
                     break;
                 }
-                if (it->value <= neighbours[i]->value) {
-                    openNodes.insert(it, neighbours[i]);
+                if (it->value < neighbours[i]->value) {
+                    if (it->next_node == nullptr) {
+                        openNodes.push_back(neighbours[i]);
+                    }
+                    else {
+                        openNodes.insert(it->next_node, neighbours[i]);
+                    }
                     break;
                 }
-                it = it->next_node;
+                it = it->previous_node;
             }
         }
     }
